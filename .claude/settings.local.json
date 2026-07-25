@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"/d/coding_with_ai/organic_arogya/Website Details/13 products final Digital images\" 2>&1 | head -30)",
+      "Read(//d/coding_with_ai/organic_arogya/Website Details/13 products final Digital images/**)",
+      "Read(//d/coding_with_ai/organic_arogya/Website Details/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(cat /tmp/oa_extract/extracted.txt | sed -n '1,50p' | tail -c 6000)",
+      "Read(//tmp/oa_extract/**)",
+      "Bash(mkdir -p /tmp/oa_xlsx)",
+      "Bash(unzip -o -q \"Product_Description.xlsx\" -d /tmp/oa_xlsx)",
+      "Read(//tmp/oa_xlsx/xl/**)"
+    ]
+  }
+}
