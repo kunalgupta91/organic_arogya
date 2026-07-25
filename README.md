@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Organic Arogya — E-commerce Platform
 
-## Getting Started
+Premium Ayurvedic wellness storefront and admin platform.
 
-First, run the development server:
+## Stack
+
+- **Framework:** Next.js 16 (App Router, Turbopack, TypeScript)
+- **Styling:** Tailwind CSS v4, Framer Motion
+- **Forms/validation:** React Hook Form + Zod
+- **Database:** PostgreSQL (Neon) via Prisma ORM
+- **Auth:** Auth.js (NextAuth v5) — credentials + Google OAuth, role-based
+- **Media:** Cloudinary (images + PDFs)
+- **Email:** Resend
+- **Payments:** Razorpay (live), Stripe (adapter wired, dormant)
+- **Testing:** Vitest (unit), Playwright (e2e)
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env   # fill in the values — see comments in the file
+npm run db:generate
+npm run db:migrate
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script                | Purpose                                   |
+| --------------------- | ------------------------------------------ |
+| `npm run dev`         | Start dev server                           |
+| `npm run build`       | Production build                           |
+| `npm run start`       | Start production server                    |
+| `npm run lint`        | ESLint                                     |
+| `npm run typecheck`   | TypeScript, no emit                        |
+| `npm run format`      | Prettier write                             |
+| `npm run test`        | Vitest unit tests                          |
+| `npm run test:e2e`    | Playwright end-to-end tests                |
+| `npm run db:migrate`  | Run Prisma migrations (dev)                |
+| `npm run db:seed`     | Seed the database from `prisma/seed.ts`    |
+| `npm run db:studio`   | Open Prisma Studio                         |
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/            # Routes (App Router): storefront, admin, api
+  components/     # ui/ (primitives), layout/, shared/
+  hooks/          # Reusable React hooks
+  lib/            # Cross-cutting clients (db, auth, cloudinary, resend, razorpay, env)
+  services/       # Business logic (product, order, cart, bulk-order, etc.)
+  store/          # Client state (Zustand — cart, wishlist)
+  types/          # Shared TypeScript types
+  constants/      # Site config, enums
+  validations/    # Zod schemas
+prisma/
+  schema.prisma   # Database schema
+  seed.ts         # Seed script (reads Product_Description.xlsx)
+e2e/              # Playwright tests
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `DEPLOYMENT.md` (added in the deployment-prep phase) for production setup.
