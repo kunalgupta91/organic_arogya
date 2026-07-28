@@ -30,6 +30,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+> The local `prisma dev` server can stop in the background (e.g. after the
+> machine sleeps). If you see database connection errors, just run
+> `npx prisma dev --detach` again — it reuses the same data.
+
 **Production:** point `DATABASE_URL` at Neon instead and run `npm run db:deploy`
 (`prisma migrate deploy`) to apply the versioned migrations in `prisma/migrations/`.
 Local dev uses `db push` for fast iteration; real migration history is still
