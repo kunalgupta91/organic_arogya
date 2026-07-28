@@ -18,14 +18,22 @@ Premium Ayurvedic wellness storefront and admin platform.
 
 ```bash
 npm install
-cp .env.example .env   # fill in the values — see comments in the file
+cp .env.example .env          # fill in the values — see comments in the file
+
+# Local database (no account needed — runs Postgres on your machine):
+npx prisma dev --detach       # prints a DATABASE_URL, paste it into .env
 npm run db:generate
-npm run db:migrate
+npm run db:push               # applies the schema (local dev workflow)
 npm run db:seed
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+**Production:** point `DATABASE_URL` at Neon instead and run `npm run db:deploy`
+(`prisma migrate deploy`) to apply the versioned migrations in `prisma/migrations/`.
+Local dev uses `db push` for fast iteration; real migration history is still
+tracked and used for production.
 
 ## Scripts
 
@@ -39,7 +47,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run format`      | Prettier write                             |
 | `npm run test`        | Vitest unit tests                          |
 | `npm run test:e2e`    | Playwright end-to-end tests                |
-| `npm run db:migrate`  | Run Prisma migrations (dev)                |
+| `npm run db:push`     | Sync schema to the database (local dev)    |
+| `npm run db:migrate`  | Create + apply a migration (dev)           |
+| `npm run db:deploy`   | Apply migrations (production/CI)           |
 | `npm run db:seed`     | Seed the database from `prisma/seed.ts`    |
 | `npm run db:studio`   | Open Prisma Studio                         |
 
@@ -58,7 +68,7 @@ src/
   validations/    # Zod schemas
 prisma/
   schema.prisma   # Database schema
-  seed.ts         # Seed script (reads Product_Description.xlsx)
+  seed.ts         # Seed script (categories + admin user; full product catalog lands in a later phase)
 e2e/              # Playwright tests
 ```
 

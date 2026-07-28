@@ -44,3 +44,12 @@ next-env.d.ts
 # testing
 /playwright-report
 /test-results
+
+/src/generated/prisma
+
+# AI agent-skill docs auto-installed by `prisma init` (vendored tool docs,
+# not app code — reinstall via the Prisma CLI if needed, not tracked here)
+/.agents/skills
+/.claude/skills
+/.windsurf/skills
+/skills-lock.json
