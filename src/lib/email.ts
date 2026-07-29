@@ -24,3 +24,14 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string) {
     `,
   });
 }
+
+const ADMIN_NOTIFICATION_EMAIL = process.env.ORDER_NOTIFICATION_EMAIL || SITE_CONFIG.email;
+
+export async function sendAdminNotificationEmail(subject: string, html: string) {
+  await getClient().emails.send({
+    from: FROM,
+    to: ADMIN_NOTIFICATION_EMAIL,
+    subject,
+    html,
+  });
+}
