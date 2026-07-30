@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { SITE_CONFIG } from "@/constants/site";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card";
+import { AddToCartButtons } from "@/components/product/add-to-cart-buttons";
 import { ImageGallery } from "./image-gallery";
 import { ProductTabs } from "./product-tabs";
 import { ShareButtons } from "./share-buttons";
@@ -225,13 +226,8 @@ export default async function ProductDetailPage({
             )}
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button size="lg" disabled={product.stock === 0} title="Cart launching in the next build phase">
-              Add to Cart
-            </Button>
-            <Button size="lg" variant="secondary" disabled={product.stock === 0} title="Cart launching in the next build phase">
-              Buy Now
-            </Button>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <AddToCartButtons productId={product.id} stock={product.stock} />
             <Link href={`/bulk-orders?product=${product.slug}`}>
               <Button size="lg" variant="outline">
                 Bulk Order

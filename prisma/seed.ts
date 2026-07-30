@@ -113,6 +113,17 @@ async function main() {
     created++;
   }
 
+  const shippingRules = [
+    { name: "Domestic (India)", region: "DOMESTIC" as const, currency: "INR" as const, flatRate: 6900, minOrderAmount: 99900 },
+    { name: "International", region: "INTERNATIONAL" as const, currency: "USD" as const, flatRate: 1500, minOrderAmount: null },
+  ];
+  for (const [index, rule] of shippingRules.entries()) {
+    const existing = await prisma.shippingRule.findFirst({ where: { name: rule.name } });
+    if (!existing) {
+      await prisma.shippingRule.create({ data: { ...rule, sortOrder: index } });
+    }
+  }
+
   for (const [index, faq] of GENERAL_FAQS.entries()) {
     const existing = await prisma.faq.findFirst({ where: { question: faq.question } });
     if (!existing) {
@@ -121,7 +132,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${CATEGORIES.length} categories, admin user (${adminEmail}), ${created}/${SEED_PRODUCTS.length} products (status=DRAFT, placeholder images — review before publishing), and ${GENERAL_FAQS.length} general FAQs.`,
+    `Seeded ${CATEGORIES.length} categories, admin user (${adminEmail}), ${created}/${SEED_PRODUCTS.length} products (status=DRAFT, placeholder images — review before publishing), ${shippingRules.length} shipping rules, and ${GENERAL_FAQS.length} general FAQs.`,
   );
 }
 

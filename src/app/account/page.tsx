@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,12 @@ export default async function AccountPage() {
         Welcome, {session.user.name ?? session.user.email}
       </h1>
       <p className="text-muted-foreground mb-8 text-sm">{session.user.email}</p>
+      <Link
+        href="/account/orders"
+        className="text-primary-600 mb-6 inline-block text-sm font-medium hover:underline"
+      >
+        View order history →
+      </Link>
       <form
         action={async () => {
           "use server";

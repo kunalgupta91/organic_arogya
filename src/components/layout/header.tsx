@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search, ShoppingBag, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { SITE_CONFIG } from "@/constants/site";
+import { getCartItemCount } from "@/services/cart-service";
 import { MobileNav } from "./mobile-nav";
 
 const LINKS = [
@@ -14,6 +15,7 @@ const LINKS = [
 
 export async function Header() {
   const session = await auth();
+  const cartCount = await getCartItemCount();
 
   return (
     <header className="border-border sticky top-0 z-40 border-b bg-white/95 backdrop-blur">
@@ -56,10 +58,15 @@ export async function Header() {
           </Link>
           <Link
             href="/cart"
-            className="text-foreground hover:text-primary-600 p-1.5"
+            className="text-foreground hover:text-primary-600 relative p-1.5"
             aria-label="Cart"
           >
             <ShoppingBag size={20} />
+            {cartCount > 0 && (
+              <span className="bg-accent-500 absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium text-white">
+                {cartCount > 9 ? "9+" : cartCount}
+              </span>
+            )}
           </Link>
           <MobileNav />
         </div>

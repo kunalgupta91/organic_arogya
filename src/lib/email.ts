@@ -35,3 +35,34 @@ export async function sendAdminNotificationEmail(subject: string, html: string) 
     html,
   });
 }
+
+type OrderConfirmationOrder = {
+  orderNumber: string;
+  currency: string;
+  totalAmount: number;
+  items: { productNameSnapshot: string; quantity: number; totalPrice: number }[];
+};
+
+export async function sendOrderConfirmationEmail(to: string, order: OrderConfirmationOrder) {
+  const formatAmount = (amount: number) => (amount / 100).toFixed(2);
+  const rows = order.items
+    .map(
+      (item) =>
+        `<tr><td>${item.productNameSnapshot} × ${item.quantity}</td><td>${order.currency} ${formatAmount(item.totalPrice)}</td></tr>`,
+    )
+    .join("");
+
+  await getClient().emails.send({
+    from: FROM,
+    to,
+    subject: `Order confirmed — ${order.orderNumber}`,
+    html: `
+      <p>Thank you for your order! Here's a summary of <strong>${order.orderNumber}</strong>:</p>
+      <table cellpadding="6" style="border-collapse: collapse; width: 100%;">
+        ${rows}
+      </table>
+      <p><strong>Total: ${order.currency} ${formatAmount(order.totalAmount)}</strong></p>
+      <p>We'll email you again once your order ships.</p>
+    `,
+  });
+}
