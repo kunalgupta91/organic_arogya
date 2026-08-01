@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/product/product-card";
 import { getActiveCategories, listStorefrontProducts } from "@/services/storefront-service";
 import { FilterBar } from "./filter-bar";
-import { Pagination } from "./pagination";
+import { Pagination } from "@/components/shared/pagination";
 
 export const metadata: Metadata = {
   title: "Shop All Products",

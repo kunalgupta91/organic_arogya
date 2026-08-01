@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
 import { WhyOrganicArogya } from "@/components/home/why-organic-arogya";
 import { CategoryGrid } from "@/components/home/category-grid";
@@ -5,6 +6,10 @@ import { ProductSection } from "@/components/home/product-section";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { NewsletterSignup } from "@/components/home/newsletter-signup";
 import { getBestSellers, getFeaturedProducts, getNewArrivals } from "@/services/storefront-service";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function HomePage() {
   const [featured, bestSellers, newArrivals] = await Promise.all([
