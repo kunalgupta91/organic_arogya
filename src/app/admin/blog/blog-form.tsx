@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
-import { CoverImageUploader } from "./cover-image-uploader";
+import { SingleImageUploader } from "@/components/admin/single-image-uploader";
 import type { BlogFormState } from "./actions";
 
 type BlogDefaults = {
@@ -49,7 +49,12 @@ export function BlogForm({
 
       <div>
         <Label>Cover image</Label>
-        <CoverImageUploader defaultValue={defaults?.coverImage ?? ""} />
+        <SingleImageUploader
+          name="coverImage"
+          defaultValue={defaults?.coverImage ?? ""}
+          folder="blog-covers"
+          label="Upload cover image"
+        />
       </div>
 
       <div>

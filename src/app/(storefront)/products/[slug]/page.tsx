@@ -5,12 +5,14 @@ import { Star, Download, FileText } from "lucide-react";
 import { getProductBySlug } from "@/services/storefront-service";
 import { formatCurrency } from "@/lib/utils";
 import { SITE_CONFIG } from "@/constants/site";
+import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButtons } from "@/components/product/add-to-cart-buttons";
 import { ImageGallery } from "./image-gallery";
 import { ProductTabs } from "./product-tabs";
 import { ShareButtons } from "./share-buttons";
+import { ReviewForm } from "./review-form";
 
 export async function generateMetadata({
   params,
@@ -40,7 +42,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, session] = await Promise.all([getProductBySlug(slug), auth()]);
   if (!product) notFound();
 
   const discountPercent =
@@ -147,28 +149,50 @@ export default async function ProductDetailPage({
     {
       id: "reviews",
       label: `Reviews (${product.reviewCount})`,
-      content:
-        product.reviews.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No reviews yet.</p>
-        ) : (
-          <div className="space-y-4">
-            {product.reviews.map((review) => (
-              <div key={review.id} className="border-border border-b pb-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star key={i} size={12} className="fill-accent-500 text-accent-500" />
-                    ))}
+      content: (
+        <div className="space-y-6">
+          <ReviewForm productId={product.id} isLoggedIn={!!session?.user} />
+          {product.reviews.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No reviews yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {product.reviews.map((review) => (
+                <div key={review.id} className="border-border border-b pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} size={12} className="fill-accent-500 text-accent-500" />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium">{review.user.name ?? "Customer"}</span>
                   </div>
-                  <span className="text-sm font-medium">{review.user.name ?? "Customer"}</span>
+                  {review.title && <p className="mt-1 text-sm font-medium">{review.title}</p>}
+                  <p className="text-muted-foreground mt-1 text-sm">{review.comment}</p>
                 </div>
-                {review.title && <p className="mt-1 text-sm font-medium">{review.title}</p>}
-                <p className="text-muted-foreground mt-1 text-sm">{review.comment}</p>
-              </div>
-            ))}
-          </div>
-        ),
+              ))}
+            </div>
+          )}
+        </div>
+      ),
     },
+    ...(product.faqs.length > 0
+      ? [
+          {
+            id: "faqs",
+            label: "FAQs",
+            content: (
+              <div className="space-y-4">
+                {product.faqs.map((faq) => (
+                  <div key={faq.id}>
+                    <p className="text-sm font-medium">{faq.question}</p>
+                    <p className="text-muted-foreground mt-1 text-sm">{faq.answer}</p>
+                  </div>
+                ))}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (

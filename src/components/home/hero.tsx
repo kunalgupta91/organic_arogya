@@ -1,8 +1,24 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/constants/site";
+import { getActiveBanners } from "@/services/banner-service";
 
-export function Hero() {
+export async function Hero() {
+  const [banner] = await getActiveBanners("HOME_HERO");
+
+  if (banner) {
+    return (
+      <section className="bg-primary-50 relative overflow-hidden">
+        <Link href={banner.linkUrl ?? "/products"} className="block">
+          <div className="relative aspect-[16/7] w-full">
+            <Image src={banner.imageUrl} alt={banner.title} fill priority className="object-cover" />
+          </div>
+        </Link>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-primary-50 relative overflow-hidden">
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-2 md:py-28">

@@ -134,6 +134,7 @@ export async function getProductBySlug(slug: string) {
         include: { user: { select: { name: true } } },
       },
       relatedTo: { where: PUBLISHED, select: productCard() },
+      faqs: { where: { isPublished: true }, orderBy: { sortOrder: "asc" } },
     },
   });
 }

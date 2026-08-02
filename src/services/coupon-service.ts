@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import type { CouponInput } from "@/validations/coupon";
 
 export class InvalidCouponError extends Error {}
 
@@ -35,4 +36,48 @@ export async function validateCoupon(code: string, subtotalInr: number, productI
     : Math.min(rawDiscount, subtotalInr);
 
   return { coupon, discountInr };
+}
+
+export async function listCoupons() {
+  return prisma.coupon.findMany({ orderBy: { createdAt: "desc" } });
+}
+
+export async function createCoupon(input: CouponInput) {
+  const existing = await prisma.coupon.findUnique({ where: { code: input.code } });
+  if (existing) throw new Error(`Coupon code "${input.code}" already exists.`);
+
+  return prisma.coupon.create({
+    data: {
+      code: input.code,
+      type: input.type,
+      value: input.value,
+      minOrderAmount: input.minOrderAmount,
+      maxDiscountAmount: input.maxDiscountAmount ?? null,
+      usageLimit: input.usageLimit ?? null,
+      validFrom: new Date(input.validFrom),
+      validUntil: new Date(input.validUntil),
+      isActive: input.isActive,
+    },
+  });
+}
+
+export async function updateCoupon(id: string, input: CouponInput) {
+  return prisma.coupon.update({
+    where: { id },
+    data: {
+      code: input.code,
+      type: input.type,
+      value: input.value,
+      minOrderAmount: input.minOrderAmount,
+      maxDiscountAmount: input.maxDiscountAmount ?? null,
+      usageLimit: input.usageLimit ?? null,
+      validFrom: new Date(input.validFrom),
+      validUntil: new Date(input.validUntil),
+      isActive: input.isActive,
+    },
+  });
+}
+
+export async function deleteCoupon(id: string) {
+  await prisma.coupon.delete({ where: { id } });
 }
