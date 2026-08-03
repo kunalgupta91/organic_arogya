@@ -1,0 +1,43 @@
+# Self-hosted alternative to Vercel + Neon: runs the app alongside its own
+# Postgres container. For local development, `npx prisma dev` (see README)
+# is faster to iterate with; this compose file is for production-style
+# self-hosting or for trying the full stack in one command.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: organic_arogya
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: organic_arogya
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U organic_arogya"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: postgresql://organic_arogya:${POSTGRES_PASSWORD:-changeme}@db:5432/organic_arogya
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_RAZORPAY_KEY_ID: ${NEXT_PUBLIC_RAZORPAY_KEY_ID}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://organic_arogya:${POSTGRES_PASSWORD:-changeme}@db:5432/organic_arogya
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

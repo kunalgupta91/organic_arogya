@@ -29,6 +29,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Produces a minimal .next/standalone build for Docker. Harmless (and
+  // unused) on Vercel, which packages the app its own way regardless.
+  output: "standalone",
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

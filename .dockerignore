@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.env
+.env.local
+*.log
+npm-debug.log*
+.DS_Store
+coverage
+playwright-report
+test-results
+src/generated
+.vercel
+.claude
+.agents
+.windsurf
+skills-lock.json
