@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Star } from "lucide-react";
 import { listAllReviews } from "@/services/review-service";
+import { StarRating } from "@/components/shared/star-rating";
 import { DeleteReviewButton } from "./delete-button";
 
 export const metadata: Metadata = {
@@ -30,11 +30,7 @@ export default async function AdminReviewsPage() {
                 <td className="px-4 py-3">{review.product.name}</td>
                 <td className="px-4 py-3">{review.user.name ?? review.user.email}</td>
                 <td className="px-4 py-3">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star key={i} size={12} className="fill-accent-500 text-accent-500" />
-                    ))}
-                  </div>
+                  <StarRating rating={review.rating} />
                 </td>
                 <td className="max-w-sm truncate px-4 py-3">{review.comment}</td>
                 <td className="px-4 py-3 text-right">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { uploadToCloudinary, type UploadKind } from "@/lib/cloudinary";
+import { rateLimit, RateLimitError } from "@/lib/rate-limit";
 
 const MAX_BYTES: Record<UploadKind, number> = {
   image: 10 * 1024 * 1024,
@@ -16,6 +17,15 @@ export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user || (session.user.role !== "ADMIN" && session.user.role !== "STAFF")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    rateLimit(`upload:${session.user.id}`, 60, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return NextResponse.json({ error: "Too many uploads. Please slow down." }, { status: 429 });
+    }
+    throw error;
   }
 
   const formData = await request.formData();

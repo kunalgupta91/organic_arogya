@@ -1,5 +1,5 @@
-import { Star } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { StarRating } from "@/components/shared/star-rating";
 
 export async function TestimonialsSection() {
   const testimonials = await prisma.testimonial.findMany({
@@ -19,10 +19,8 @@ export async function TestimonialsSection() {
           {testimonials.map((t) => (
             <div key={t.id} className="border-border rounded-xl border bg-white p-6">
               {t.rating && (
-                <div className="mb-2 flex gap-0.5">
-                  {Array.from({ length: t.rating }).map((_, i) => (
-                    <Star key={i} size={14} className="fill-accent-500 text-accent-500" />
-                  ))}
+                <div className="mb-2">
+                  <StarRating rating={t.rating} size={14} />
                 </div>
               )}
               <p className="text-foreground text-sm">{t.content}</p>

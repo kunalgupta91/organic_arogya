@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
+import { sanitizeRichText } from "@/lib/sanitize-html";
 import type { BlogInput } from "@/validations/blog";
 
 export async function listBlogs() {
@@ -57,7 +58,7 @@ export async function createBlog(input: BlogInput, authorId: string) {
       title: input.title,
       slug,
       excerpt: input.excerpt || null,
-      content: input.content,
+      content: sanitizeRichText(input.content),
       coverImage: input.coverImage || null,
       categoryId: input.categoryId || null,
       status: input.status,
@@ -83,7 +84,7 @@ export async function updateBlog(id: string, input: BlogInput) {
       title: input.title,
       slug,
       excerpt: input.excerpt || null,
-      content: input.content,
+      content: sanitizeRichText(input.content),
       coverImage: input.coverImage || null,
       categoryId: input.categoryId || null,
       status: input.status,

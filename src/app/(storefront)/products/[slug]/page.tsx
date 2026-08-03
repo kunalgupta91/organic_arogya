@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { SITE_CONFIG } from "@/constants/site";
 import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { StarRating } from "@/components/shared/star-rating";
 import { ProductCard } from "@/components/product/product-card";
 import { AddToCartButtons } from "@/components/product/add-to-cart-buttons";
 import { ImageGallery } from "./image-gallery";
@@ -159,11 +160,7 @@ export default async function ProductDetailPage({
               {product.reviews.map((review) => (
                 <div key={review.id} className="border-border border-b pb-4">
                   <div className="flex items-center gap-2">
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: review.rating }).map((_, i) => (
-                        <Star key={i} size={12} className="fill-accent-500 text-accent-500" />
-                      ))}
-                    </div>
+                    <StarRating rating={review.rating} />
                     <span className="text-sm font-medium">{review.user.name ?? "Customer"}</span>
                   </div>
                   {review.title && <p className="mt-1 text-sm font-medium">{review.title}</p>}

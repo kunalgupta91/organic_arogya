@@ -2,6 +2,8 @@
 
 import { AuthError } from "next-auth";
 import { auth, signIn } from "@/lib/auth";
+import { getClientIp } from "@/lib/client-ip";
+import { rateLimit, RateLimitError } from "@/lib/rate-limit";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -18,10 +20,19 @@ import {
 
 export type AuthActionState = { error: string } | { error: null };
 
+const TOO_MANY_ATTEMPTS = "Too many attempts. Please try again in a few minutes.";
+
 export async function registerAction(
   _prevState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    rateLimit(`register:${await getClientIp()}`, 5, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) return { error: TOO_MANY_ATTEMPTS };
+    throw error;
+  }
+
   const parsed = registerSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
@@ -56,6 +67,13 @@ export async function loginAction(
   _prevState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    rateLimit(`login:${await getClientIp()}`, 10, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) return { error: TOO_MANY_ATTEMPTS };
+    throw error;
+  }
+
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: "Enter a valid email and password." };
@@ -83,6 +101,13 @@ export async function forgotPasswordAction(
   _prevState: ForgotPasswordState,
   formData: FormData,
 ): Promise<ForgotPasswordState> {
+  try {
+    rateLimit(`forgot-password:${await getClientIp()}`, 5, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) return { error: TOO_MANY_ATTEMPTS, submitted: false };
+    throw error;
+  }
+
   const parsed = forgotPasswordSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: "Enter a valid email address.", submitted: false };
@@ -97,6 +122,13 @@ export async function resetPasswordAction(
   _prevState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    rateLimit(`reset-password:${await getClientIp()}`, 10, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) return { error: TOO_MANY_ATTEMPTS };
+    throw error;
+  }
+
   const parsed = resetPasswordSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };

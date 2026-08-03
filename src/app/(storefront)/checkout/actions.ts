@@ -3,6 +3,8 @@
 import { auth } from "@/lib/auth";
 import { checkoutSchema } from "@/validations/checkout";
 import { createOrderFromCart } from "@/services/order-service";
+import { getClientIp } from "@/lib/client-ip";
+import { rateLimit, RateLimitError } from "@/lib/rate-limit";
 
 export type CheckoutState = {
   error: string | null;
@@ -13,6 +15,15 @@ export async function createOrderAction(
   _prevState: CheckoutState,
   formData: FormData,
 ): Promise<CheckoutState> {
+  try {
+    rateLimit(`checkout:${await getClientIp()}`, 10, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { error: "Too many order attempts. Please try again later." };
+    }
+    throw error;
+  }
+
   const session = await auth();
   const raw = Object.fromEntries(formData);
 

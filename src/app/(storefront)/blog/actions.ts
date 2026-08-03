@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { commentSchema } from "@/validations/blog";
+import { getClientIp } from "@/lib/client-ip";
+import { rateLimit, RateLimitError } from "@/lib/rate-limit";
 
 export type CommentFormState = { error: string | null; success: boolean };
 
@@ -11,6 +13,15 @@ export async function submitCommentAction(
   _prevState: CommentFormState,
   formData: FormData,
 ): Promise<CommentFormState> {
+  try {
+    rateLimit(`comment:${await getClientIp()}`, 10, 15 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { error: "Too many comments. Please try again later.", success: false };
+    }
+    throw error;
+  }
+
   const session = await auth();
   const parsed = commentSchema.safeParse({
     blogId: formData.get("blogId"),

@@ -11,11 +11,15 @@ export function ProductTabs({ tabs }: { tabs: Tab[] }) {
 
   return (
     <div>
-      <div className="border-border flex flex-wrap gap-1 border-b">
+      <div role="tablist" aria-label="Product information" className="border-border flex flex-wrap gap-1 border-b">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            id={`tab-${tab.id}`}
+            aria-selected={tab.id === active}
+            aria-controls={`tabpanel-${tab.id}`}
             onClick={() => setActive(tab.id)}
             className={cn(
               "border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
@@ -28,7 +32,16 @@ export function ProductTabs({ tabs }: { tabs: Tab[] }) {
           </button>
         ))}
       </div>
-      <div className="py-6">{activeTab?.content}</div>
+      {activeTab && (
+        <div
+          role="tabpanel"
+          id={`tabpanel-${activeTab.id}`}
+          aria-labelledby={`tab-${activeTab.id}`}
+          className="py-6"
+        >
+          {activeTab.content}
+        </div>
+      )}
     </div>
   );
 }

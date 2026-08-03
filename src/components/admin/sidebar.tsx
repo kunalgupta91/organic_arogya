@@ -37,7 +37,10 @@ const NAV_GROUPS = [
   },
   {
     label: "Admin",
-    items: [{ href: "/admin/users", label: "Users" }],
+    items: [
+      { href: "/admin/users", label: "Users" },
+      { href: "/admin/audit-log", label: "Audit Log" },
+    ],
   },
 ];
 

@@ -15,6 +15,9 @@ export default defineConfig({
     command: "npm run build && npm run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    // Generous — a full production build can take a couple of minutes on
+    // slower machines/CI runners; a short timeout here just causes flaky
+    // "server never started" failures rather than a real test failure.
+    timeout: 300_000,
   },
 });

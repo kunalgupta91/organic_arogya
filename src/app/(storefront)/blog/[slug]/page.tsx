@@ -81,9 +81,9 @@ export default async function BlogPostPage({
         </div>
       )}
 
-      {/* blog.content is authored only by STAFF/ADMIN via the TipTap editor,
-          not raw user input, so rendering it directly is the standard
-          trusted-CMS-content tradeoff. */}
+      {/* blog.content is sanitized with DOMPurify at write time
+          (src/services/blog-service.ts) before it's ever stored, so this
+          render is safe even though the source is admin-authored HTML. */}
       <div
         className="blog-content mt-8"
         dangerouslySetInnerHTML={{ __html: blog.content }}

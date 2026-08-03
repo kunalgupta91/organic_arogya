@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { reviewSchema } from "@/validations/review";
 import { AlreadyReviewedError, submitReview } from "@/services/review-service";
+import { rateLimit, RateLimitError } from "@/lib/rate-limit";
 
 export type ReviewFormState = { error: string | null; success: boolean };
 
@@ -14,6 +15,15 @@ export async function submitReviewAction(
   const session = await auth();
   if (!session?.user) {
     return { error: "Please sign in to leave a review.", success: false };
+  }
+
+  try {
+    rateLimit(`review:${session.user.id}`, 10, 60 * 60 * 1000);
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { error: "Too many reviews submitted. Please try again later.", success: false };
+    }
+    throw error;
   }
 
   const parsed = reviewSchema.safeParse(Object.fromEntries(formData));
