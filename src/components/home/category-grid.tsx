@@ -1,6 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Droplets, Sparkles, SprayCan, Leaf, Candy, Smile } from "lucide-react";
 import { getActiveCategories } from "@/services/storefront-service";
+import { ScrollCarousel } from "@/components/shared/scroll-carousel";
+
+const ICONS = [Droplets, Sparkles, SprayCan, Leaf, Candy, Smile];
 
 export async function CategoryGrid() {
   const categories = await getActiveCategories();
@@ -9,33 +13,27 @@ export async function CategoryGrid() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <h2 className="font-display text-primary-900 text-center text-2xl sm:text-3xl">
-        Shop by Category
-      </h2>
-      <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-        {withProducts.map((category) => (
-          <Link
-            key={category.id}
-            href={`/products?category=${category.slug}`}
-            className="border-border group overflow-hidden rounded-xl border bg-white text-center transition-shadow hover:shadow-md"
-          >
-            <div className="bg-muted relative aspect-square">
-              {category.image && (
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              )}
-            </div>
-            <div className="p-3">
-              <p className="text-sm font-medium">{category.name}</p>
-              <p className="text-muted-foreground text-xs">{category._count.products} products</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <ScrollCarousel title="Shop by Category">
+        {withProducts.map((category, i) => {
+          const Icon = ICONS[i % ICONS.length];
+          return (
+            <Link
+              key={category.id}
+              href={`/products?category=${category.slug}`}
+              className="group flex w-24 shrink-0 flex-col items-center gap-3 text-center sm:w-28"
+            >
+              <div className="bg-primary-50 ring-border relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full ring-1 transition-transform group-hover:scale-105 sm:h-24 sm:w-24">
+                {category.image ? (
+                  <Image src={category.image} alt={category.name} fill className="object-cover" />
+                ) : (
+                  <Icon className="text-primary-600" size={28} />
+                )}
+              </div>
+              <p className="text-foreground line-clamp-2 text-sm font-medium">{category.name}</p>
+            </Link>
+          );
+        })}
+      </ScrollCarousel>
     </section>
   );
 }

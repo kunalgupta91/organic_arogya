@@ -123,3 +123,11 @@ body {
   color: var(--color-primary-600);
   text-decoration: underline;
 }
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
