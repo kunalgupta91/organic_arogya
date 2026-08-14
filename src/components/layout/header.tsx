@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, ShoppingBag, User } from "lucide-react";
+import { LayoutDashboard, Search, ShoppingBag, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { SITE_CONFIG } from "@/constants/site";
 import { getCartItemCount } from "@/services/cart-service";
@@ -49,6 +49,15 @@ export async function Header() {
         </form>
 
         <div className="flex items-center gap-3">
+          {(session?.user?.role === "ADMIN" || session?.user?.role === "STAFF") && (
+            <Link
+              href="/admin"
+              className="text-foreground hover:text-primary-600 hidden p-1.5 sm:block"
+              aria-label="Admin dashboard"
+            >
+              <LayoutDashboard size={20} />
+            </Link>
+          )}
           <Link
             href={session?.user ? "/account" : "/login"}
             className="text-foreground hover:text-primary-600 p-1.5"
